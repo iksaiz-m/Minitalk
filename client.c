@@ -6,7 +6,7 @@
 /*   By: iksaiz-m <iksaiz-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 12:41:37 by iksaiz-m          #+#    #+#             */
-/*   Updated: 2024/09/12 17:44:50 by iksaiz-m         ###   ########.fr       */
+/*   Updated: 2024/09/12 21:14:06 by iksaiz-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,27 +15,26 @@
 #include <stdlib.h>
 #include "libft/libft.h"
 
-int	sendsignal(int pid, char *string)
+void	sendsignal(int pid, char *string)
 {
 	int	i;
 	int	bit;
-
+	
 	i = 0;
-	bit = 0;
+	bit = 8;
 	while (string[i] != '\0')
 	{
-		while (bit <= 7)
+		bit = 8;
+		while (--bit >= 0) // Numero de posiciones que se desplazaran los bits a la derecha
 		{
-			if (string[i] & (1 >> bit))
-				kill(pid, SIGUSR1);
+			if (((string[i] >> bit) & 1)) //Desplaza el bit a la derecha hasta la posicion 0 y verifica si el bit es 1
+				kill(pid, SIGUSR2); // En caso de ser cierto se envia SIGUSR2 valor bit = 1
 			else
-				kill(pid, SIGUSR2);
-			bit++;
+				kill(pid, SIGUSR1); //Si no es cierto se envia SIGUSR1 valor bit = 0
+			usleep(100); // espera 100 microsegundos para darle tiempo a procesar al servidor
 		}
-		bit = 0;
 		i++;
 	}
-	return (0);
 }
 
 int	main(int ac, char **av)
@@ -51,7 +50,7 @@ int	main(int ac, char **av)
 		pid = ft_atoi(av[1]);
 	if (pid == 0)
 		return (1);
-	if (pid)
+	if (pid )
 		sendsignal(pid, av[2]);
 	return (0);
 }

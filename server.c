@@ -6,7 +6,7 @@
 /*   By: iksaiz-m <iksaiz-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 12:43:22 by iksaiz-m          #+#    #+#             */
-/*   Updated: 2024/09/12 18:05:59 by iksaiz-m         ###   ########.fr       */
+/*   Updated: 2024/09/12 21:29:44 by iksaiz-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,36 +17,49 @@
 
 void	signal_received(int signal)
 {
-	int i;
-	int bit;
-
-	i = 0;
-	bit = 0;
+	// Inicializar las variables estaticas
+	static	size_t	i = 0;
+	static	size_t byte = 0;
+	// Verifica si la señal recbida es SIGUSR1 o SIGUSR2
 	if (signal == SIGUSR1)
-		bit = bit << 1;
-	if (signal == SIGUSR2)
-		bit = 
+		byte = byte << 1; // Desplaza el bit a la izquierda y deja el bit en la posicion 0 a 0
+	else if (signal == SIGUSR2)
+		byte = (byte << 1) | 1; // Desplaza el bit a la izquierda y luego establece la posicion 0 a 1
+	i++; // Contador de bits establecidos
+	if (i == 8) // Se verifica que la cantidad de bits recibidos sea 8
+	{
+		ft_printf("%c", (char)byte); // Imprime el character usando los 8 bits para conseguir el numero ascii
+		i = 0; // Resetea el contador de bits
+		byte = 0; // Resetea el byte para poder seguir acumulando nuevos bits.
+	}
 }
 
 int	main(int ac, char **av)
 {
 	pid_t	pid;
 
-	if (ac != 1)
+    // Verificar la cantidad de argumentos
+	if (ac != 1 || av[1])
 	{
-		ft_printf("Please put only one argument\n");
+		ft_printf("Please dont put any argument\n");
 		return (1);
 	}
-	while (1)
+	// Obtener el PID del proceso actual
+	pid = getpid();
+	if (pid == -1)
 	{
-		pid = getpid();
-		if (pid == 0)
-			return (1);
-		ft_printf("pid: %d\n", pid);
-		pause();
+		ft_printf("Error getting pid\n");
+		return (1);
 	}
+	ft_printf("pid: %d\n", pid);
+	// Configurar los manejadores de señales
 	signal(SIGUSR1, signal_received);
 	signal(SIGUSR2, signal_received);
+	// Esperar indefinidamente por señales
+	while (1)
+	{
+		pause();
+	}
 	return (0);
 }
 /*
