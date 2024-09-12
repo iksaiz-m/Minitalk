@@ -6,7 +6,7 @@
 /*   By: iksaiz-m <iksaiz-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 12:43:22 by iksaiz-m          #+#    #+#             */
-/*   Updated: 2024/09/11 19:19:57 by iksaiz-m         ###   ########.fr       */
+/*   Updated: 2024/09/12 18:05:59 by iksaiz-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,19 @@
 #include <signal.h>
 #include <stdlib.h>
 #include "libft/libft.h"
+
+void	signal_received(int signal)
+{
+	int i;
+	int bit;
+
+	i = 0;
+	bit = 0;
+	if (signal == SIGUSR1)
+		bit = bit << 1;
+	if (signal == SIGUSR2)
+		bit = 
+}
 
 int	main(int ac, char **av)
 {
@@ -32,10 +45,8 @@ int	main(int ac, char **av)
 		ft_printf("pid: %d\n", pid);
 		pause();
 	}
-	//signal(SIGUSR1, signal_received());
-	//signal(SIGUSR2, signal_received());
-	if (ft_atoi(av[1]) == 0)
-		return (1);
+	signal(SIGUSR1, signal_received);
+	signal(SIGUSR2, signal_received);
 	return (0);
 }
 /*

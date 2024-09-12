@@ -6,7 +6,7 @@
 /*   By: iksaiz-m <iksaiz-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 12:41:37 by iksaiz-m          #+#    #+#             */
-/*   Updated: 2024/09/11 19:31:59 by iksaiz-m         ###   ########.fr       */
+/*   Updated: 2024/09/12 17:44:50 by iksaiz-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,18 @@ int	sendsignal(int pid, char *string)
 	int	bit;
 
 	i = 0;
+	bit = 0;
 	while (string[i] != '\0')
 	{
-		kill(pid, SIGUSR1);
-		kill(pid, SIGUSR2);
+		while (bit <= 7)
+		{
+			if (string[i] & (1 >> bit))
+				kill(pid, SIGUSR1);
+			else
+				kill(pid, SIGUSR2);
+			bit++;
+		}
+		bit = 0;
 		i++;
 	}
 	return (0);
